@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Readiness Assessment — Yeimi Gómez</title>
+<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=DM+Mono:wght@300;400&family=Lora:ital,wght@0,400;1,400&display=swap');
+
+:root {
+  --midnight: #1C3B61;
+  --purple:   #5D48A5;
+  --cyan:     #27C9C1;
+  --gold:     #C79F3F;
+  --dcyan:    #209C96;
+  --fog:      #F6F8FA;
+  --white:    #ffffff;
+  --text:     #1a2a3a;
+  --muted:    #6b7c93;
+  --border:   rgba(28,59,97,.12);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Instrument Sans',sans-serif; background:var(--fog); color:var(--text); min-height:100vh; overflow-x:hidden; }
+
+/* ─── HEADER ─────────────────────────────── */
+.hdr { background:var(--midnight); padding:16px 36px; display:flex; align-items:center; justify-content:space-between; position:relative; }
+.hdr::before { content:''; position:absolute; left:0;top:0;bottom:0; width:4px; background:var(--cyan); }
+.hdr-brand { display:flex; align-items:center; gap:12px; }
+.hdr-dot { width:34px;height:34px; border-radius:50%; background:var(--cyan); display:flex;align-items:center;justify-content:center; font-size:15px; }
+.hdr-name { color:#fff; font-size:14px; font-weight:600; }
+.hdr-role { color:rgba(255,255,255,.45); font-size:11px; font-family:'DM Mono',monospace; margin-top:2px; }
+.lang-wrap { display:flex; border:1px solid rgba(255,255,255,.2); border-radius:6px; overflow:hidden; }
+.lang-btn { padding:5px 14px; font-size:12px; font-family:'DM Mono',monospace; background:transparent; color:rgba(255,255,255,.5); border:none; cursor:pointer; transition:all .2s; }
+.lang-btn.on { background:var(--cyan); color:var(--midnight); font-weight:700; }
+
+/* ─── HERO ───────────────────────────────── */
+.hero { background:var(--midnight); padding:52px 32px 64px; text-align:center; position:relative; overflow:hidden; }
+.hero::after { content:''; position:absolute; bottom:-1px;left:0;right:0; height:38px; background:var(--fog); clip-path:ellipse(55% 100% at 50% 100%); }
+.hero-eye { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.22em; color:var(--cyan); text-transform:uppercase; margin-bottom:16px; }
+.hero-h { font-size:clamp(24px,5vw,44px); font-weight:700; color:#fff; line-height:1.15; margin-bottom:10px; }
+.hero-h span { color:var(--cyan); }
+.hero-sub { font-size:16px; color:rgba(255,255,255,.58); max-width:480px; margin:0 auto 28px; line-height:1.65; font-family:'Lora',serif; font-style:italic; }
+.hero-stats { display:flex; justify-content:center; gap:40px; flex-wrap:wrap; }
+.stat-n { font-size:26px; font-weight:700; color:var(--gold); }
+.stat-l { font-size:11px; color:rgba(255,255,255,.42); font-family:'DM Mono',monospace; letter-spacing:.06em; margin-top:2px; }
+
+/* ─── PROGRESS ───────────────────────────── */
+.prog { max-width:660px; margin:32px auto 0; padding:0 22px; }
+.prog-meta { display:flex; justify-content:space-between; margin-bottom:7px; font-size:12px; font-family:'DM Mono',monospace; color:var(--muted); }
+.prog-track { height:4px; background:rgba(28,59,97,.1); border-radius:2px; overflow:hidden; }
+.prog-fill { height:100%; background:linear-gradient(90deg,var(--cyan),var(--purple)); border-radius:2px; transition:width .5s ease; width:0%; }
+
+/* ─── MAIN ───────────────────────────────── */
+.main { max-width:660px; margin:0 auto; padding:36px 22px 80px; }
+.screen { display:none; animation:fu .38s ease; }
+.screen.active { display:block; }
+@keyframes fu { from{opacity:0;transform:translateY(13px)} to{opacity:1;transform:translateY(0)} }
+
+/* ─── CARDS ──────────────────────────────── */
+.card { background:#fff; border-radius:16px; padding:34px; border:1px solid var(--border); margin-bottom:18px; }
+.dark-card { background:var(--midnight); border-radius:16px; padding:34px; color:#fff; margin-bottom:18px; position:relative; overflow:hidden; }
+.dark-card::before { content:''; position:absolute; top:-70px;right:-70px; width:220px;height:220px; border-radius:50%; background:rgba(93,72,165,.18); }
+
+/* ─── TYPOGRAPHY HELPERS ─────────────────── */
+.eyebrow { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.18em; text-transform:uppercase; margin-bottom:12px; }
+.eyebrow-cyan  { color:var(--cyan); }
+.eyebrow-gold  { color:var(--gold); }
+.section-h { font-size:22px; font-weight:700; color:var(--midnight); margin-bottom:8px; line-height:1.3; }
+.section-h span { color:var(--purple); }
+.section-h-white { color:#fff; }
+.section-h-white span { color:var(--cyan); }
+.section-sub { font-size:14px; color:var(--muted); line-height:1.65; margin-bottom:24px; font-family:'Lora',serif; font-style:italic; }
+.section-sub-white { color:rgba(255,255,255,.62); }
+
+/* ─── INTRO ──────────────────────────────── */
+.intro-tag { display:inline-flex; align-items:center; gap:6px; background:rgba(39,201,193,.1); border:1px solid rgba(39,201,193,.28); border-radius:30px; padding:4px 13px; font-size:11px; font-family:'DM Mono',monospace; color:var(--dcyan); margin-bottom:18px; letter-spacing:.04em; }
+.feat-grid { display:grid; grid-template-columns:1fr 1fr; gap:11px; margin-bottom:24px; }
+.feat { display:flex; gap:11px; align-items:flex-start; padding:12px; background:var(--fog); border-radius:10px; border:1px solid var(--border); }
+.feat-ic { width:30px;height:30px; border-radius:7px; background:var(--midnight); color:var(--cyan); display:flex;align-items:center;justify-content:center; font-size:13px; flex-shrink:0; }
+.feat-tx { font-size:13px; color:var(--text); line-height:1.4; }
+.feat-tx strong { color:var(--midnight); display:block; margin-bottom:1px; }
+.time-row { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); font-family:'DM Mono',monospace; margin-bottom:18px; }
+.time-dot { width:7px;height:7px; border-radius:50%; background:var(--cyan); flex-shrink:0; }
+
+/* ─── BUTTONS ────────────────────────────── */
+.btn-cta { background:var(--cyan); color:var(--midnight); font-weight:700; padding:15px 28px; font-size:16px; border-radius:10px; width:100%; border:none; cursor:pointer; transition:all .2s; font-family:'Instrument Sans',sans-serif; }
+.btn-cta:hover { background:var(--dcyan); color:#fff; transform:translateY(-2px); }
+.btn-main { background:var(--midnight); color:#fff; padding:12px 24px; font-size:15px; font-weight:600; border-radius:8px; border:none; cursor:pointer; transition:all .2s; font-family:'Instrument Sans',sans-serif; }
+.btn-main:hover { background:var(--purple); transform:translateY(-1px); }
+.btn-main:disabled { background:#c8d5e0; cursor:not-allowed; transform:none; }
+.btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border); padding:12px 22px; font-size:15px; font-weight:500; border-radius:8px; cursor:pointer; transition:all .2s; font-family:'Instrument Sans',sans-serif; }
+.btn-ghost:hover { color:var(--midnight); border-color:var(--midnight); }
+.nav { display:flex; justify-content:space-between; align-items:center; margin-top:8px; }
+
+/* ─── QUESTIONS ──────────────────────────── */
+.q-area { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.15em; color:var(--cyan); text-transform:uppercase; margin-bottom:11px; display:flex; align-items:center; gap:8px; }
+.q-area::before { content:''; width:6px;height:6px; border-radius:50%; background:var(--cyan); flex-shrink:0; }
+.q-num { font-size:11px; font-family:'DM Mono',monospace; color:var(--muted); margin-bottom:8px; }
+.q-txt { font-size:19px; font-weight:600; color:var(--midnight); line-height:1.4; margin-bottom:24px; }
+.opts { display:flex; flex-direction:column; gap:9px; }
+.opt { display:flex; align-items:flex-start; gap:13px; padding:14px 16px; border:1.5px solid var(--border); border-radius:10px; cursor:pointer; transition:all .18s; background:var(--fog); }
+.opt:hover { border-color:var(--cyan); background:rgba(39,201,193,.04); }
+.opt.sel { border-color:var(--cyan); background:rgba(39,201,193,.08); }
+.opt-dot { width:20px;height:20px; border-radius:50%; border:2px solid #c8d5e0; flex-shrink:0; margin-top:1px; transition:all .18s; display:flex;align-items:center;justify-content:center; }
+.opt.sel .opt-dot { background:var(--cyan); border-color:var(--cyan); }
+.opt.sel .opt-dot::after { content:''; width:7px;height:7px; border-radius:50%; background:#fff; }
+.opt-tx { font-size:15px; color:var(--text); line-height:1.4; }
+
+/* ─── FORM ───────────────────────────────── */
+.f-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+.f-grp { display:flex; flex-direction:column; gap:5px; }
+.f-lbl { font-size:12px; font-weight:600; color:var(--midnight); letter-spacing:.03em; }
+.f-in { padding:11px 13px; border:1.5px solid var(--border); border-radius:8px; font-family:'Instrument Sans',sans-serif; font-size:14px; color:var(--text); background:var(--fog); outline:none; transition:border-color .2s; }
+.f-in:focus { border-color:var(--cyan); background:#fff; }
+.f-sel { padding:11px 13px; border:1.5px solid var(--border); border-radius:8px; font-family:'Instrument Sans',sans-serif; font-size:14px; color:var(--text); background:var(--fog); outline:none; cursor:pointer; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7c93' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 13px center; }
+.priv { font-size:11px; color:var(--muted); margin-top:12px; text-align:center; font-family:'DM Mono',monospace; }
+
+/* ─── GATE FEATURES ──────────────────────── */
+.gate-feats { display:flex; flex-direction:column; gap:11px; margin-bottom:26px; }
+.gate-feat { display:flex; gap:12px; align-items:flex-start; }
+.gate-fic { width:28px;height:28px; border-radius:6px; background:rgba(39,201,193,.14); border:1px solid rgba(39,201,193,.28); color:var(--cyan); display:flex;align-items:center;justify-content:center; font-size:12px; flex-shrink:0; }
+.gate-ftx { font-size:14px; color:rgba(255,255,255,.8); line-height:1.5; }
+.gate-ftx strong { color:#fff; }
+.gate-hr { border:none; border-top:1px solid rgba(255,255,255,.1); margin:22px 0; }
+
+/* ─── CALENDLY EMBED ─────────────────────── */
+.cal-section-label { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.16em; color:var(--cyan); text-transform:uppercase; margin-bottom:6px; }
+.cal-section-sub { font-size:13px; color:rgba(255,255,255,.55); margin-bottom:14px; font-family:'Lora',serif; font-style:italic; }
+.cal-wrap { border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,.12); background:#fff; position:relative; min-height:680px; }
+.calendly-inline-widget { min-width:280px; height:680px; }
+.cal-loader { position:absolute; inset:0; background:rgba(28,59,97,.9); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; border-radius:14px; transition:opacity .5s; }
+.cal-loader.gone { opacity:0; pointer-events:none; }
+.cal-spinner { width:30px;height:30px; border:3px solid rgba(39,201,193,.25); border-top-color:var(--cyan); border-radius:50%; animation:spin 1s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.cal-loader p { font-size:13px; color:rgba(255,255,255,.6); font-family:'DM Mono',monospace; }
+
+/* ─── LOCK BAR ───────────────────────────── */
+.lock-bar { display:flex; align-items:center; gap:10px; margin-top:14px; padding:12px 16px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:8px; font-size:12px; color:rgba(255,255,255,.45); font-family:'DM Mono',monospace; letter-spacing:.03em; transition:all .4s; }
+.lock-bar.unlocked { background:rgba(39,201,193,.12); border-color:rgba(39,201,193,.35); color:var(--cyan); }
+
+/* ─── WHAT'S NEXT CARD ───────────────────── */
+.next-card { background:#fff; border-radius:12px; padding:18px 22px; border:1px solid var(--border); border-left:3px solid var(--gold); }
+.next-h { font-size:13px; font-weight:600; color:var(--midnight); margin-bottom:6px; }
+.next-p { font-size:13px; color:var(--muted); line-height:1.6; }
+
+/* ─── SUCCESS BANNER ─────────────────────── */
+.success { background:rgba(39,201,193,.1); border:1px solid rgba(39,201,193,.28); border-radius:10px; padding:13px 17px; display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+.success-tx { font-size:13px; color:var(--dcyan); line-height:1.4; }
+.success-tx strong { color:var(--midnight); }
+
+/* ─── RESULT HERO ────────────────────────── */
+.res-hero { background:var(--midnight); border-radius:16px; padding:36px 32px; color:#fff; margin-bottom:18px; position:relative; overflow:hidden; }
+.res-hero::before { content:''; position:absolute; top:-60px;right:-60px; width:200px;height:200px; border-radius:50%; background:rgba(93,72,165,.2); }
+.res-lbl { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.2em; color:var(--cyan); text-transform:uppercase; margin-bottom:18px; }
+.score-row { display:flex; align-items:flex-end; gap:16px; margin-bottom:16px; flex-wrap:wrap; }
+.score-n { font-size:76px; font-weight:700; line-height:1; color:#fff; }
+.score-suf { font-size:28px; color:rgba(255,255,255,.38); }
+.badge { padding:7px 16px; border-radius:30px; font-size:13px; font-weight:700; letter-spacing:.05em; display:inline-block; margin-bottom:6px; }
+.b-crit  { background:rgba(232,75,74,.2);  color:#ff8080; border:1px solid rgba(232,75,74,.3); }
+.b-dev   { background:rgba(199,159,63,.2); color:var(--gold); border:1px solid rgba(199,159,63,.3); }
+.b-prog  { background:rgba(39,201,193,.2); color:var(--cyan); border:1px solid rgba(39,201,193,.3); }
+.b-adv   { background:rgba(39,201,193,.3); color:#7ffcf8;  border:1px solid var(--cyan); }
+.sbar-wrap { margin:14px 0 20px; }
+.sbar-track { height:8px; background:rgba(255,255,255,.1); border-radius:4px; overflow:hidden; }
+.sbar-fill { height:100%; border-radius:4px; transition:width 1.2s cubic-bezier(.4,0,.2,1); width:0%; }
+.f-crit  { background:linear-gradient(90deg,#e24b4a,#ff6b6b); }
+.f-dev   { background:linear-gradient(90deg,var(--gold),#f0c050); }
+.f-prog  { background:linear-gradient(90deg,var(--dcyan),var(--cyan)); }
+.f-adv   { background:linear-gradient(90deg,var(--cyan),#7ffcf8); }
+.cost-box { background:rgba(199,159,63,.14); border:1px solid rgba(199,159,63,.28); border-radius:12px; padding:18px 20px; margin-top:8px; }
+.cost-lbl { font-size:10px; font-family:'DM Mono',monospace; letter-spacing:.12em; color:var(--gold); text-transform:uppercase; margin-bottom:5px; }
+.cost-amt { font-size:34px; font-weight:700; color:var(--gold); line-height:1; }
+.cost-per { font-size:13px; color:rgba(199,159,63,.7); }
+.cost-note { font-size:12px; color:rgba(255,255,255,.42); margin-top:5px; font-family:'Lora',serif; font-style:italic; }
+.res-sum { font-size:15px; color:rgba(255,255,255,.72); margin-top:16px; line-height:1.65; font-family:'Lora',serif; font-style:italic; }
+
+/* ─── AREA BREAKDOWN ─────────────────────── */
+.bd-h { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--midnight); margin-bottom:20px; }
+.area-row { margin-bottom:16px; }
+.area-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; }
+.area-name { font-size:14px; font-weight:600; color:var(--midnight); }
+.area-sc { font-size:12px; font-family:'DM Mono',monospace; color:var(--muted); }
+.area-track { height:6px; background:rgba(28,59,97,.08); border-radius:3px; overflow:hidden; }
+.area-fill { height:100%; border-radius:3px; transition:width 1s ease; width:0%; }
+.area-note { font-size:12px; color:var(--muted); margin-top:4px; font-style:italic; }
+
+/* ─── CTA CARD ───────────────────────────── */
+.cta-card { background:linear-gradient(135deg,var(--midnight),#244b77); border-radius:16px; padding:32px; color:#fff; border:1px solid rgba(39,201,193,.18); }
+.cta-pts { list-style:none; margin-bottom:22px; display:flex; flex-direction:column; gap:9px; }
+.cta-pts li { display:flex; gap:10px; font-size:14px; color:rgba(255,255,255,.8); align-items:flex-start; }
+.cta-pts li::before { content:'→'; color:var(--cyan); font-weight:700; flex-shrink:0; }
+.cta-mail { font-family:'DM Mono',monospace; font-size:13px; color:var(--gold); margin-top:14px; text-align:center; }
+.gate-mail { font-family:'DM Mono',monospace; font-size:12px; color:rgba(255,255,255,.3); text-align:center; margin-top:14px; }
+
+/* ─── RESPONSIVE ─────────────────────────── */
+@media(max-width:600px){
+  .hdr{padding:13px 18px;}
+  .hero{padding:36px 18px 56px;}
+  .main{padding:24px 14px 60px;}
+  .card,.dark-card,.res-hero,.cta-card{padding:22px 18px;}
+  .f-row,.feat-grid{grid-template-columns:1fr;}
+  .score-n{font-size:58px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════════════ -->
+<div class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-dot">🦋</div>
+    <div>
+      <div class="hdr-name">Yeimi Gómez Rincón</div>
+      <div class="hdr-role">CTO · Enterprise Digital Architect</div>
+    </div>
+  </div>
+  <div class="lang-wrap">
+    <button class="lang-btn on" onclick="setLang('en')">EN</button>
+    <button class="lang-btn"   onclick="setLang('es')">ES</button>
+  </div>
+</div>
+
+<!-- ══ HERO ════════════════════════════════════════════════ -->
+<div class="hero">
+  <div class="hero-eye" data-en="FREE DIAGNOSTIC TOOL" data-es="DIAGNÓSTICO GRATUITO">FREE DIAGNOSTIC TOOL</div>
+  <h1 class="hero-h" data-en="Digital Readiness <span>Assessment</span>" data-es="Assessment de <span>Madurez Digital</span>">Digital Readiness <span>Assessment</span></h1>
+  <p class="hero-sub"
+     data-en="Find out exactly what digital inefficiency is costing your business — in dollars."
+     data-es="Descubre cuánto le cuesta a tu negocio la ineficiencia digital — en dólares.">
+    Find out exactly what digital inefficiency is costing your business — in dollars.
+  </p>
+  <div class="hero-stats">
+    <div><div class="stat-n">10</div><div class="stat-l" data-en="questions" data-es="preguntas">questions</div></div>
+    <div><div class="stat-n">3 min</div><div class="stat-l" data-en="to complete" data-es="para completar">to complete</div></div>
+    <div><div class="stat-n">$0</div><div class="stat-l" data-en="cost" data-es="costo">cost</div></div>
+  </div>
+</div>
+
+<!-- ══ PROGRESS ════════════════════════════════════════════ -->
+<div class="prog">
+  <div class="prog-meta">
+    <span id="prog-lbl">Question 0 of 10</span>
+    <span id="prog-pct">0%</span>
+  </div>
+  <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+</div>
+
+<!-- ══ MAIN ════════════════════════════════════════════════ -->
+<div class="main">
+
+  <!-- ① INTRO ─────────────────────────────────────────────── -->
+  <div class="screen active" id="s-intro">
+    <div class="card">
+      <div class="intro-tag">● <span data-en="Enterprise-grade · Free" data-es="Nivel empresarial · Gratis">Enterprise-grade · Free</span></div>
+      <h2 class="section-h"
+          data-en="Is your technology working <span>for</span> you — or against you?"
+          data-es="¿Tu tecnología trabaja <span>para</span> ti — o en tu contra?">
+        Is your technology working <span>for</span> you — or against you?
+      </h2>
+      <p class="section-sub"
+         data-en="74% of SMEs can't maximize the value of their technology investments. This assessment identifies where your business is losing money to digital inefficiency — and what to do about it."
+         data-es="El 74% de las pymes no maximiza el valor de sus inversiones tecnológicas. Este assessment identifica dónde tu negocio pierde dinero por ineficiencia digital — y qué hacer.">
+        74% of SMEs can't maximize the value of their technology investments. This assessment identifies where your business is losing money to digital inefficiency — and what to do about it.
+      </p>
+      <div class="feat-grid">
+        <div class="feat"><div class="feat-ic">⚡</div><div class="feat-tx"><strong data-en="Operations" data-es="Operaciones">Operations</strong><span data-en="Automation & process efficiency" data-es="Automatización y eficiencia">Automation & process efficiency</span></div></div>
+        <div class="feat"><div class="feat-ic">📊</div><div class="feat-tx"><strong data-en="Data" data-es="Datos">Data</strong><span data-en="How well you use your information" data-es="Qué tan bien usas tu información">How well you use your information</span></div></div>
+        <div class="feat"><div class="feat-ic">🏗️</div><div class="feat-tx"><strong data-en="Technology" data-es="Tecnología">Technology</strong><span data-en="Systems, tools & integration" data-es="Sistemas, herramientas e integración">Systems, tools & integration</span></div></div>
+        <div class="feat"><div class="feat-ic">🧭</div><div class="feat-tx"><strong data-en="Strategy" data-es="Estrategia">Strategy</strong><span data-en="Digital roadmap & leadership" data-es="Hoja de ruta y liderazgo digital">Digital roadmap & leadership</span></div></div>
+      </div>
+      <div class="time-row">
+        <div class="time-dot"></div>
+        <span data-en="3 minutes · Results revealed on your free strategy call" data-es="3 minutos · Resultados revelados en tu llamada estratégica gratuita">3 minutes · Results revealed on your free strategy call</span>
+      </div>
+      <button class="btn-cta" onclick="startAssessment()"
+              data-en="Start Assessment →" data-es="Iniciar Assessment →">Start Assessment →</button>
+    </div>
+  </div>
+
+  <!-- ② QUESTIONS (built by JS) ──────────────────────────── -->
+  <div id="q-wrap"></div>
+
+  <!-- ③ CONTACT INFO ─────────────────────────────────────── -->
+  <div class="screen" id="s-contact">
+    <div class="card">
+      <div class="eyebrow eyebrow-gold" data-en="STEP 1 OF 2 — YOUR DETAILS" data-es="PASO 1 DE 2 — TUS DATOS">STEP 1 OF 2 — YOUR DETAILS</div>
+      <h2 class="section-h"
+          data-en="Almost done — tell us about yourself"
+          data-es="Casi listo — cuéntanos sobre ti">Almost done — tell us about yourself</h2>
+      <p class="section-sub"
+         data-en="Your assessment is complete. Enter your details to continue to your free strategy call and unlock your personalized results."
+         data-es="Tu assessment está completo. Ingresa tus datos para continuar a tu llamada estratégica gratuita y ver tus resultados personalizados.">
+        Your assessment is complete. Enter your details to continue to your free strategy call and unlock your personalized results.
+      </p>
+      <div class="f-row">
+        <div class="f-grp">
+          <label class="f-lbl" data-en="First Name *" data-es="Nombre *">First Name *</label>
+          <input class="f-in" type="text" id="f-name" placeholder="John">
+        </div>
+        <div class="f-grp">
+          <label class="f-lbl" data-en="Last Name *" data-es="Apellido *">Last Name *</label>
+          <input class="f-in" type="text" id="f-last" placeholder="Smith">
+        </div>
+      </div>
+      <div class="f-row">
+        <div class="f-grp">
+          <label class="f-lbl" data-en="Work Email *" data-es="Email de trabajo *">Work Email *</label>
+          <input class="f-in" type="email" id="f-email" placeholder="john@company.com">
+        </div>
+        <div class="f-grp">
+          <label class="f-lbl" data-en="Company *" data-es="Empresa *">Company *</label>
+          <input class="f-in" type="text" id="f-company" placeholder="Acme Corp">
+        </div>
+      </div>
+      <div class="f-row">
+        <div class="f-grp">
+          <label class="f-lbl" data-en="Industry" data-es="Industria">Industry</label>
+          <select class="f-sel" id="f-industry">
+            <option>Government Contracting</option>
+            <option>Professional Services</option>
+            <option>Financial Services</option>
+            <option>Healthcare</option>
+            <option>Legal</option>
+            <option>Technology</option>
+            <option>Manufacturing</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="f-grp">
+          <label class="f-lbl" data-en="Team Size" data-es="Tamaño de equipo">Team Size</label>
+          <select class="f-sel" id="f-size">
+            <option>1–10 employees</option>
+            <option>11–50 employees</option>
+            <option>51–200 employees</option>
+            <option>200+ employees</option>
+          </select>
+        </div>
+      </div>
+      <p class="priv" data-en="🔒 Private. No spam. No sharing." data-es="🔒 Privado. Sin spam. Sin compartir.">🔒 Private. No spam. No sharing.</p>
+      <button class="btn-cta" style="margin-top:14px;" onclick="goBooking()"
+              data-en="Continue → Schedule Your Free Call" data-es="Continuar → Agendar tu Llamada Gratuita">Continue → Schedule Your Free Call</button>
+    </div>
+  </div>
+
+  <!-- ④ BOOKING GATE — Calendly embedded ─────────────────── -->
+  <div class="screen" id="s-booking">
+
+    <div class="dark-card">
+      <div class="eyebrow eyebrow-cyan" data-en="STEP 2 OF 2 — SCHEDULE YOUR CALL" data-es="PASO 2 DE 2 — AGENDA TU LLAMADA">STEP 2 OF 2 — SCHEDULE YOUR CALL</div>
+      <h2 class="section-h section-h-white"
+          data-en="Your results are ready.<br><span>Book your call to unlock them.</span>"
+          data-es="Tus resultados están listos.<br><span>Agenda tu llamada para verlos.</span>">
+        Your results are ready.<br><span>Book your call to unlock them.</span>
+      </h2>
+      <p class="section-sub section-sub-white"
+         data-en="Your Digital Readiness Score shows your exact gaps and the dollar cost of your inefficiency. We'll review it together — so you leave with a clear action plan, not just a number."
+         data-es="Tu Digital Readiness Score muestra tus brechas exactas y el costo en dólares de tu ineficiencia. Lo revisaremos juntos — para que salgas con un plan de acción claro, no solo un número.">
+        Your Digital Readiness Score shows your exact gaps and the dollar cost of your inefficiency. We'll review it together — so you leave with a clear action plan, not just a number.
+      </p>
+
+      <div class="gate-feats">
+        <div class="gate-feat">
+          <div class="gate-fic">🎯</div>
+          <div class="gate-ftx">
+            <strong data-en="Personalized score + dollar cost estimate" data-es="Puntaje personalizado + estimado en dólares">Personalized score + dollar cost estimate</strong>
+            <span data-en=" — reviewed with expert context" data-es=" — revisado con contexto experto"> — reviewed with expert context</span>
+          </div>
+        </div>
+        <div class="gate-feat">
+          <div class="gate-fic">⚡</div>
+          <div class="gate-ftx">
+            <strong data-en="Your top 3 priority actions" data-es="Tus 3 acciones prioritarias">Your top 3 priority actions</strong>
+            <span data-en=" — specific to your business and industry" data-es=" — específicas para tu negocio e industria"> — specific to your business and industry</span>
+          </div>
+        </div>
+        <div class="gate-feat">
+          <div class="gate-fic">🗺️</div>
+          <div class="gate-ftx">
+            <strong data-en="12-month digital roadmap sketch" data-es="Esquema de hoja de ruta a 12 meses">12-month digital roadmap sketch</strong>
+            <span data-en=" — no cost, no commitment" data-es=" — sin costo, sin compromiso"> — no cost, no commitment</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gate-hr"></div>
+
+      <!-- Calendar label -->
+      <div class="cal-section-label" data-en="SELECT A DATE & TIME — RESULTS UNLOCK AUTOMATICALLY ON BOOKING" data-es="SELECCIONA FECHA Y HORA — LOS RESULTADOS SE DESBLOQUEAN AL AGENDAR">SELECT A DATE & TIME — RESULTS UNLOCK AUTOMATICALLY ON BOOKING</div>
+      <div class="cal-section-sub" data-en="Pick a slot below. The moment your booking is confirmed, your full results appear instantly." data-es="Elige un horario. En el momento en que tu reserva sea confirmada, tus resultados aparecerán al instante.">Pick a slot below. The moment your booking is confirmed, your full results appear instantly.</div>
+
+      <!-- Calendly inline widget -->
+      <div class="cal-wrap">
+        <div class="calendly-inline-widget" id="cal-widget"
+          data-url="https://calendly.com/goye-trinaviaconsulting/30min?hide_gdpr_banner=1&primary_color=27C9C1&text_color=1C3B61&background_color=ffffff"
+          style="height:680px;">
+        </div>
+        <div class="cal-loader" id="cal-loader">
+          <div class="cal-spinner"></div>
+          <p data-en="Loading calendar..." data-es="Cargando calendario...">Loading calendar...</p>
+        </div>
+      </div>
+
+      <!-- Step 2 instruction + always-visible unlock button -->
+      <div style="margin-top:16px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;padding:14px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:10px;">
+          <div style="width:26px;height:26px;min-width:26px;border-radius:50%;background:rgba(39,201,193,.18);border:1.5px solid var(--cyan);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--cyan);">2</div>
+          <p style="font-size:13px;color:rgba(255,255,255,.65);line-height:1.5;margin:0;">
+            <span data-en="After you see" data-es="Cuando veas">After you see</span>
+            <strong style="color:#fff;"> "You are scheduled ✅" </strong>
+            <span data-en="inside the calendar above, click the button below." data-es="dentro del calendario arriba, haz clic en el botón abajo.">inside the calendar above, click the button below.</span>
+          </p>
+        </div>
+        <button onclick="onCallBooked()"
+          style="background:var(--cyan);color:var(--midnight);font-weight:700;font-size:16px;padding:16px 28px;border-radius:12px;border:none;cursor:pointer;width:100%;font-family:Instrument Sans,sans-serif;letter-spacing:.01em;transition:background .2s,color .2s;"
+          onmouseover="this.style.background='#209C96';this.style.color='#fff'"
+          onmouseout="this.style.background='#27C9C1';this.style.color='#1C3B61'"
+          data-en="My Call Is Confirmed — Show My Results →"
+          data-es="Mi Llamada Está Confirmada — Ver Mis Resultados →">
+          My Call Is Confirmed — Show My Results →
+        </button>
+      </div>
+
+      <p class="gate-mail" style="margin-top:14px;">goye@trinaviaconsulting.com</p>
+    </div>
+
+    <div class="next-card">
+      <p class="next-h" data-en="What happens after you book?" data-es="¿Qué pasa después de reservar?">What happens after you book?</p>
+      <p class="next-p"
+         data-en="Yeimi receives your full assessment results the moment you book — score, breakdown by area, and your answers — so she arrives at your call fully prepared with insights specific to your business."
+         data-es="Yeimi recibe tus resultados completos en el momento en que reservas — puntaje, desglose por área y tus respuestas — para llegar a tu llamada totalmente preparada con insights específicos para tu negocio.">
+        Yeimi receives your full assessment results the moment you book — score, breakdown by area, and your answers — so she arrives at your call fully prepared with insights specific to your business.
+      </p>
+    </div>
+  </div>
+
+  <!-- ⑤ RESULTS ─────────────────────────────────────────── -->
+  <div class="screen" id="s-result">
+
+    <div class="success">
+      <span style="font-size:20px">✅</span>
+      <div class="success-tx">
+        <strong data-en="Call confirmed!" data-es="¡Llamada confirmada!">Call confirmed!</strong>
+        <span data-en=" Yeimi will review these results before your session and arrive fully prepared." data-es=" Yeimi revisará estos resultados antes de tu sesión y llegará totalmente preparada."> Yeimi will review these results before your session and arrive fully prepared.</span>
+      </div>
+    </div>
+
+    <div class="res-hero">
+      <div class="res-lbl" data-en="YOUR DIGITAL READINESS SCORE" data-es="TU DIGITAL READINESS SCORE">YOUR DIGITAL READINESS SCORE</div>
+      <div class="score-row">
+        <div class="score-n" id="res-score">0<span class="score-suf">/100</span></div>
+        <div>
+          <div class="badge" id="res-badge"></div>
+          <div style="font-size:12px;color:rgba(255,255,255,.45);font-family:'DM Mono',monospace;margin-top:4px;" id="res-name"></div>
+        </div>
+      </div>
+      <div class="sbar-wrap"><div class="sbar-track"><div class="sbar-fill" id="res-bar"></div></div></div>
+      <div class="cost-box">
+        <div class="cost-lbl" data-en="ESTIMATED ANNUAL COST OF DIGITAL INEFFICIENCY" data-es="COSTO ANUAL ESTIMADO DE INEFICIENCIA DIGITAL">ESTIMATED ANNUAL COST OF DIGITAL INEFFICIENCY</div>
+        <div class="cost-amt" id="res-cost">—</div>
+        <div class="cost-note" id="res-cost-note"></div>
+      </div>
+      <p class="res-sum" id="res-sum"></p>
+    </div>
+
+    <div class="card">
+      <div class="bd-h" data-en="SCORE BY AREA" data-es="PUNTAJE POR ÁREA">SCORE BY AREA</div>
+      <div id="area-bd"></div>
+    </div>
+
+    <div class="cta-card">
+      <div class="eyebrow eyebrow-cyan" data-en="YOUR CALL IS CONFIRMED" data-es="TU LLAMADA ESTÁ CONFIRMADA">YOUR CALL IS CONFIRMED</div>
+      <h3 style="font-size:20px;font-weight:700;margin-bottom:8px;line-height:1.3;" id="cta-h"></h3>
+      <p style="font-size:14px;color:rgba(255,255,255,.62);margin-bottom:20px;line-height:1.65;font-family:'Lora',serif;font-style:italic;" id="cta-sub"></p>
+      <ul class="cta-pts" id="cta-pts"></ul>
+      <p class="cta-mail">goye@trinaviaconsulting.com</p>
+    </div>
+
+  </div>
+</div><!-- /main -->
+
+<script>
+// ── STATE ───────────────────────────────────────────────────────
+let lang = 'en';
+let currentQ = 0;
+let answers  = {};
+
+// ── QUESTIONS DATA ──────────────────────────────────────────────
+const Qs = [
+  {
+    area: {en:'Operations', es:'Operaciones'},
+    q: {
+      en: "How much of your team's daily work is done manually — data entry, reports, approvals, follow-ups?",
+      es: '¿Qué porcentaje del trabajo diario de tu equipo se hace manualmente — ingreso de datos, reportes, aprobaciones, seguimientos?'
+    },
+    opts: [
+      {en:'Almost everything is manual — we run on spreadsheets and email', es:'Casi todo es manual — trabajamos con hojas de cálculo y email', s:5},
+      {en:'More than 60% is manual despite having some software', es:'Más del 60% es manual aunque tenemos algo de software', s:25},
+      {en:'About half automated, half still manual', es:'Aproximadamente la mitad automatizado, la otra mitad manual', s:55},
+      {en:'Most key processes are automated and well integrated', es:'La mayoría de procesos clave están automatizados e integrados', s:85}
+    ]
+  },
+  {
+    area: {en:'Data', es:'Datos'},
+    q: {
+      en: 'When you need to make a business decision, how do you access the data you need?',
+      es: 'Cuando necesitas tomar una decisión de negocio, ¿cómo accedes a los datos que necesitas?'
+    },
+    opts: [
+      {en:'I ask someone to compile it manually — takes days', es:'Le pido a alguien que lo compile manualmente — tarda días', s:5},
+      {en:"Reports exist but they're always outdated or incomplete", es:'Existen reportes pero siempre están desactualizados o incompletos', s:25},
+      {en:"I have dashboards but I'm not sure how reliable they are", es:'Tengo dashboards pero no estoy seguro de qué tan confiables son', s:55},
+      {en:'Real-time dashboards with reliable, actionable data', es:'Dashboards en tiempo real con datos confiables y accionables', s:90}
+    ]
+  },
+  {
+    area: {en:'Technology', es:'Tecnología'},
+    q: {
+      en: 'How well do your business systems talk to each other? (CRM, accounting, project management, HR…)',
+      es: '¿Qué tan bien se comunican entre sí los sistemas de tu negocio? (CRM, contabilidad, gestión de proyectos, RRHH…)'
+    },
+    opts: [
+      {en:"They don't — each is an island, we re-enter data manually", es:'No se comunican — cada uno es una isla, reingresamos datos manualmente', s:5},
+      {en:'Partial connections but lots of manual workarounds', es:'Conexiones parciales pero muchos parches manuales', s:25},
+      {en:'Most are connected but there are still gaps', es:'La mayoría están conectados pero aún hay brechas', s:60},
+      {en:'Fully integrated — data flows automatically across systems', es:'Totalmente integrados — los datos fluyen automáticamente', s:90}
+    ]
+  },
+  {
+    area: {en:'Operations', es:'Operaciones'},
+    q: {
+      en: 'How does your business handle customer onboarding, service delivery, or project kickoff?',
+      es: '¿Cómo maneja tu negocio la incorporación de clientes, entrega de servicios o inicio de proyectos?'
+    },
+    opts: [
+      {en:'It varies every time — no standard process, lots of improvisation', es:'Varía cada vez — sin proceso estándar, mucha improvisación', s:5},
+      {en:"We have a process but it's mostly in people's heads, not documented", es:'Tenemos un proceso pero está en la cabeza de las personas, no documentado', s:25},
+      {en:'Documented but not consistently followed', es:'Documentado pero no siempre se sigue', s:55},
+      {en:'Standardized digital workflow that runs consistently', es:'Flujo digital estandarizado que se ejecuta consistentemente', s:88}
+    ]
+  },
+  {
+    area: {en:'Strategy', es:'Estrategia'},
+    q: {
+      en: "How would you describe your company's current technology strategy?",
+      es: '¿Cómo describirías la estrategia tecnológica actual de tu empresa?'
+    },
+    opts: [
+      {en:"We don't have one — we buy tools when problems come up", es:'No tenemos una — compramos herramientas cuando surgen problemas', s:5},
+      {en:'We have an idea of what we want but no clear roadmap', es:'Tenemos una idea de lo que queremos pero sin hoja de ruta clara', s:28},
+      {en:'We have a roadmap but struggle to execute it consistently', es:'Tenemos una hoja de ruta pero nos cuesta ejecutarla consistentemente', s:58},
+      {en:'Clear digital strategy aligned with business goals and budget', es:'Estrategia digital clara alineada con objetivos de negocio y presupuesto', s:90}
+    ]
+  },
+  {
+    area: {en:'Data', es:'Datos'},
+    q: {
+      en: 'When your team needs to collaborate or share information across departments, what happens?',
+      es: 'Cuando tu equipo necesita colaborar o compartir información entre áreas, ¿qué ocurre?'
+    },
+    opts: [
+      {en:"Lots of emails, calls, duplicate files — it's chaotic", es:'Muchos emails, llamadas y archivos duplicados — es caótico', s:5},
+      {en:'We use shared drives but version control is a constant problem', es:'Usamos unidades compartidas pero el control de versiones es un problema constante', s:28},
+      {en:'We have collaboration tools but adoption is inconsistent', es:'Tenemos herramientas de colaboración pero la adopción es inconsistente', s:60},
+      {en:'Structured digital collaboration with clear ownership and access', es:'Colaboración digital estructurada con propiedad y acceso claros', s:88}
+    ]
+  },
+  {
+    area: {en:'Technology', es:'Tecnología'},
+    q: {
+      en: 'How much of your current technology investment is delivering measurable value?',
+      es: '¿Cuánto de tu inversión tecnológica actual está entregando valor medible?'
+    },
+    opts: [
+      {en:"Honestly not sure — we spend on tech but don't track ROI", es:'Honestamente no estoy seguro — gastamos en tecnología pero no medimos el ROI', s:5},
+      {en:'Less than 40% — we have tools nobody uses or uses poorly', es:'Menos del 40% — tenemos herramientas que nadie usa o usa mal', s:22},
+      {en:'About half delivers value, the rest is underutilized', es:'Aproximadamente la mitad entrega valor, el resto está subutilizado', s:55},
+      {en:'Most technology investment has a clear, measurable return', es:'La mayoría de la inversión tecnológica tiene un retorno claro y medible', s:88}
+    ]
+  },
+  {
+    area: {en:'Operations', es:'Operaciones'},
+    q: {
+      en: 'How does your team handle cybersecurity and data protection?',
+      es: '¿Cómo maneja tu equipo la ciberseguridad y la protección de datos?'
+    },
+    opts: [
+      {en:'No formal policy — mostly "hope nothing goes wrong"', es:'Sin política formal — principalmente "esperar que nada salga mal"', s:5},
+      {en:'Basic measures (antivirus, passwords) but no structured approach', es:'Medidas básicas (antivirus, contraseñas) pero sin enfoque estructurado', s:25},
+      {en:'We have policies but compliance is not consistently enforced', es:'Tenemos políticas pero el cumplimiento no se aplica consistentemente', s:58},
+      {en:'Formal security framework with training, monitoring, and compliance', es:'Marco de seguridad formal con formación, monitoreo y cumplimiento', s:90}
+    ]
+  },
+  {
+    area: {en:'Strategy', es:'Estrategia'},
+    q: {
+      en: 'How prepared is your team to adopt new technologies or digital ways of working?',
+      es: '¿Qué tan preparado está tu equipo para adoptar nuevas tecnologías o formas digitales de trabajar?'
+    },
+    opts: [
+      {en:'Very resistant — most prefer the old way', es:'Muy resistente — la mayoría prefiere la forma antigua', s:8},
+      {en:'Mixed — some open, many resist without proper support', es:'Mixto — algunos abiertos, muchos resisten sin apoyo adecuado', s:28},
+      {en:'Generally open but we lack structured change management', es:'Generalmente abiertos pero nos falta gestión del cambio estructurada', s:60},
+      {en:'Strong digital culture — our team adapts quickly to change', es:'Cultura digital fuerte — nuestro equipo se adapta rápido al cambio', s:90}
+    ]
+  },
+  {
+    area: {en:'Data', es:'Datos'},
+    q: {
+      en: 'How confident are you that your business can scale without its processes breaking down?',
+      es: '¿Qué tan seguro estás de que tu negocio puede crecer sin que sus procesos colapsen?'
+    },
+    opts: [
+      {en:'Not at all — growth always creates chaos for us', es:'Para nada — el crecimiento siempre nos genera caos', s:5},
+      {en:"Somewhat concerned — we've seen cracks at smaller growth levels", es:'Algo preocupado — ya hemos visto grietas con crecimientos menores', s:25},
+      {en:'Mostly ready but certain bottlenecks would slow us down', es:'Mayormente listos pero ciertos cuellos de botella nos ralentizarían', s:58},
+      {en:'Fully scalable — our systems and processes are built to grow', es:'Totalmente escalable — nuestros sistemas están construidos para crecer', s:90}
+    ]
+  }
+];
+
+const AREA_COLORS = {Operations:'#27C9C1', Data:'#C79F3F', Technology:'#5D48A5', Strategy:'#209C96'};
+const AREA_ES = {Operations:'Operaciones', Data:'Datos', Technology:'Tecnología', Strategy:'Estrategia'};
+
+// ── LANGUAGE ────────────────────────────────────────────────────
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('on'));
+  document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('on');
+  document.querySelectorAll('[data-en]').forEach(el => {
+    const t = el.getAttribute('data-' + l);
+    if (t) el.innerHTML = t;
+  });
+  renderQ();
+}
+
+// ── BUILD QUESTIONS ─────────────────────────────────────────────
+function buildQs() {
+  const wrap = document.getElementById('q-wrap');
+  wrap.innerHTML = '';
+  Qs.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'screen';
+    div.id = `sq${i}`;
+    div.innerHTML = `
+      <div class="card">
+        <div class="q-area" id="qa${i}">${q.area[lang]}</div>
+        <div class="q-num">${lang==='en'?'Question':'Pregunta'} ${i+1} ${lang==='en'?'of':'de'} ${Qs.length}</div>
+        <div class="q-txt" id="qt${i}">${q.q[lang]}</div>
+        <div class="opts" id="qo${i}">
+          ${q.opts.map((o,j) => `
+            <div class="opt" id="o${i}_${j}" onclick="pick(${i},${j},${o.s})">
+              <div class="opt-dot"></div>
+              <div class="opt-tx" id="ot${i}_${j}">${o[lang]}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div class="nav">
+        <button class="btn-ghost" onclick="prevQ()" ${i===0?'style="visibility:hidden"':''}>
+          ← <span>${lang==='en'?'Back':'Atrás'}</span>
+        </button>
+        <button class="btn-main" id="bn${i}" onclick="nextQ(${i})" disabled>
+          ${i===Qs.length-1 ? (lang==='en'?'Finish →':'Finalizar →') : (lang==='en'?'Next →':'Siguiente →')}
+        </button>
+      </div>`;
+    wrap.appendChild(div);
+  });
+}
+
+function renderQ() {
+  if (currentQ < 0 || currentQ >= Qs.length) return;
+  const q = Qs[currentQ];
+  const a = document.getElementById(`qa${currentQ}`);
+  const t = document.getElementById(`qt${currentQ}`);
+  if (a) a.textContent = q.area[lang];
+  if (t) t.textContent = q.q[lang];
+  q.opts.forEach((o, j) => {
+    const el = document.getElementById(`ot${currentQ}_${j}`);
+    if (el) el.textContent = o[lang];
+  });
+  if (answers[currentQ] !== undefined) {
+    document.querySelectorAll(`#qo${currentQ} .opt`).forEach((el, j) => {
+      el.classList.toggle('sel', j === answers[currentQ].idx);
+    });
+  }
+}
+
+// ── NAVIGATION ──────────────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function startAssessment() {
+  buildQs();
+  currentQ = 0;
+  show('sq0');
+  updateBar();
+}
+
+function pick(qi, oi, s) {
+  answers[qi] = {idx: oi, score: s};
+  document.querySelectorAll(`#qo${qi} .opt`).forEach((el, j) => el.classList.toggle('sel', j === oi));
+  document.getElementById(`bn${qi}`).disabled = false;
+}
+
+function nextQ(i) {
+  if (i < Qs.length - 1) {
+    currentQ = i + 1;
+    show(`sq${currentQ}`);
+    updateBar();
+    renderQ();
+  } else {
+    show('s-contact');
+    updateBar(true);
+  }
+}
+
+function prevQ() {
+  if (currentQ > 0) {
+    currentQ--;
+    show(`sq${currentQ}`);
+    updateBar();
+    renderQ();
+  }
+}
+
+function updateBar(done) {
+  const n = done ? Qs.length : currentQ;
+  const pct = Math.round((n / Qs.length) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-lbl').textContent = done
+    ? (lang === 'en' ? 'Almost done!' : '¡Casi listo!')
+    : (lang === 'en' ? `Question ${currentQ + 1} of ${Qs.length}` : `Pregunta ${currentQ + 1} de ${Qs.length}`);
+}
+
+// ── CONTACT → BOOKING ───────────────────────────────────────────
+function goBooking() {
+  const name  = document.getElementById('f-name').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  if (!name || !email) {
+    alert(lang === 'en' ? 'Please enter your name and email.' : 'Por favor ingresa tu nombre y email.');
+    return;
+  }
+  show('s-booking');
+  document.getElementById('prog-fill').style.width = '92%';
+  document.getElementById('prog-pct').textContent  = '92%';
+  document.getElementById('prog-lbl').textContent  = lang === 'en' ? 'Step 2 of 2' : 'Paso 2 de 2';
+  initCalendly(name, email);
+}
+
+// ── CALENDLY SETUP ──────────────────────────────────────────────
+function initCalendly(name, email) {
+  const widget = document.getElementById('cal-widget');
+  const loader = document.getElementById('cal-loader');
+
+  // Build URL with pre-filled name & email
+  const base = 'https://calendly.com/goye-trinaviaconsulting/30min';
+  const params = new URLSearchParams({
+    hide_gdpr_banner: '1',
+    primary_color:    '27C9C1',
+    text_color:       '1C3B61',
+    background_color: 'ffffff',
+    name:  name  || '',
+    email: email || ''
+  });
+  const url = `${base}?${params.toString()}`;
+
+  // Init via Calendly API if loaded, else set data-url (widget.js picks it up)
+  if (window.Calendly && typeof Calendly.initInlineWidget === 'function') {
+    widget.innerHTML = '';
+    Calendly.initInlineWidget({ url, parentElement: widget });
+  } else {
+    widget.setAttribute('data-url', url);
+  }
+
+  // Hide loader after widget has time to render
+  setTimeout(() => {
+    if (loader) loader.classList.add('gone');
+  }, 3000);
+
+}
+
+// ── CALENDLY EVENT — postMessage listener (auto) ───────────────
+window.addEventListener('message', function(e) {
+  if (!e.origin || !e.origin.includes('calendly.com')) return;
+  let ev = null;
+  try {
+    if (e.data && typeof e.data === 'object') ev = e.data.event || e.data.type;
+    else if (typeof e.data === 'string') ev = JSON.parse(e.data).event;
+  } catch(err) {}
+  if (ev && (ev.includes('scheduled') || ev.includes('event_scheduled'))) {
+    onCallBooked();
+  }
+});
+
+
+function onCallBooked() {
+  // Prevent double firing
+  if (window._callBooked) return;
+  window._callBooked = true;
+
+  // Hide fallback button if visible
+  const fw = document.getElementById('fallback-wrap');
+  if (fw) fw.style.display = 'none';
+
+  // Update lock bar
+  const bar = document.getElementById('lock-bar');
+  if (bar) {
+    bar.innerHTML = `<span>✅</span><span>${lang === 'en' ? 'Call scheduled! Loading your results...' : '¡Llamada agendada! Cargando tus resultados...'}</span>`;
+    bar.classList.add('unlocked');
+  }
+  // Notify Goye immediately
+  notifyGoye();
+  // Show results after short delay
+  setTimeout(() => {
+    computeResults();
+  }, 1400);
+}
+
+// ── COMPUTE & SHOW RESULTS ──────────────────────────────────────
+function computeResults() {
+  const sc    = Object.values(answers).map(a => a.score);
+  const total = sc.length ? Math.round(sc.reduce((a,b) => a+b, 0) / sc.length) : 0;
+  const name    = document.getElementById('f-name').value.trim();
+  const company = document.getElementById('f-company').value.trim();
+
+  show('s-result');
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('prog-pct').textContent  = '100%';
+  document.getElementById('prog-lbl').textContent  = lang === 'en' ? 'Complete ✓' : 'Completado ✓';
+
+  // Animate score number
+  const el = document.getElementById('res-score');
+  let n = 0;
+  const iv = setInterval(() => {
+    n = Math.min(n + 2, total);
+    el.innerHTML = `${n}<span class="score-suf">/100</span>`;
+    if (n >= total) clearInterval(iv);
+  }, 16);
+
+  // Determine tier
+  let badge, bClass, fClass, cost, summary, ctaH, ctaSub, ctaPts;
+
+  if (total < 30) {
+    badge = lang==='en' ? 'CRITICAL STAGE'   : 'ETAPA CRÍTICA';
+    bClass = 'b-crit'; fClass = 'f-crit'; cost = '$80,000 – $180,000';
+    summary = lang==='en'
+      ? `${name}, your business is operating with significant digital gaps that cost real money every month. The path forward is clear — and the gains are immediate.`
+      : `${name}, tu negocio opera con brechas digitales significativas que cuestan dinero real cada mes. El camino es claro — y las ganancias son inmediatas.`;
+    ctaH   = lang==='en' ? 'On your call: highest-impact fixes first.'            : 'En tu llamada: correcciones de mayor impacto primero.';
+    ctaSub = lang==='en' ? 'Yeimi reviewed your results and arrives fully prepared with a prioritized plan specific to your business.' : 'Yeimi revisó tus resultados y llega totalmente preparada con un plan priorizado específico para tu negocio.';
+    ctaPts = lang==='en'
+      ? ['The #1 process to automate immediately', 'Quick wins vs. strategic investments', 'A realistic 90-day action plan']
+      : ['El proceso #1 para automatizar de inmediato', 'Victorias rápidas vs. inversiones estratégicas', 'Un plan de acción realista a 90 días'];
+
+  } else if (total < 55) {
+    badge = lang==='en' ? 'DEVELOPING'     : 'EN DESARROLLO';
+    bClass = 'b-dev'; fClass = 'f-dev'; cost = '$40,000 – $90,000';
+    summary = lang==='en'
+      ? `${name}, you've started your digital journey but significant gaps remain. You're leaving productivity gains on the table — your competitors may already be capturing them.`
+      : `${name}, has comenzado tu camino digital pero quedan brechas significativas. Estás dejando ganancias de productividad sobre la mesa — tus competidores puede que ya las estén capturando.`;
+    ctaH   = lang==='en' ? 'Time to accelerate your transformation.' : 'Momento de acelerar tu transformación.';
+    ctaSub = lang==='en' ? 'You have the foundation. What you need is a strategic architecture that connects the dots.' : 'Tienes la base. Lo que necesitas es una arquitectura estratégica que conecte los puntos.';
+    ctaPts = lang==='en'
+      ? ['Audit of existing tech — what to fix vs. replace', 'Automation strategy for your top 3 bottlenecks', 'Digital roadmap aligned to your growth goals']
+      : ['Auditoría tecnológica — qué corregir vs. reemplazar', 'Estrategia de automatización para tus 3 cuellos de botella', 'Hoja de ruta alineada con tus objetivos de crecimiento'];
+
+  } else if (total < 78) {
+    badge = lang==='en' ? 'PROGRESSING'    : 'EN PROGRESO';
+    bClass = 'b-prog'; fClass = 'f-prog'; cost = '$15,000 – $45,000';
+    summary = lang==='en'
+      ? `${name}, you're above average — good foundations in place. The opportunity now is optimization and scalability: making what you have work harder for you.`
+      : `${name}, estás por encima del promedio — buenas bases establecidas. La oportunidad ahora es optimización y escalabilidad: hacer que lo que tienes trabaje más para ti.`;
+    ctaH   = lang==='en' ? "Optimize what you have. Build what's next." : 'Optimiza lo que tienes. Construye lo que sigue.';
+    ctaSub = lang==='en' ? 'The highest ROI at this stage comes from connecting systems better and building predictive capabilities on your data.' : 'El mayor ROI en esta etapa viene de conectar mejor tus sistemas y construir capacidades predictivas sobre tus datos.';
+    ctaPts = lang==='en'
+      ? ['Integration audit to eliminate remaining data silos', 'Data strategy — turn information into competitive advantage', 'Scalability review for sustainable growth']
+      : ['Auditoría de integración para eliminar silos de datos restantes', 'Estrategia de datos — convierte información en ventaja competitiva', 'Revisión de escalabilidad para crecimiento sostenible'];
+
+  } else {
+    badge = lang==='en' ? 'ADVANCED'       : 'AVANZADO';
+    bClass = 'b-adv'; fClass = 'f-adv'; cost = lang==='en' ? 'Under $15,000' : 'Menos de $15,000';
+    summary = lang==='en'
+      ? `${name}, you're in the top tier of digital maturity for SMEs. Your focus now: staying ahead with AI, predictive analytics, and next-generation architectures before your competitors do.`
+      : `${name}, estás en el nivel superior de madurez digital para pymes. Tu enfoque ahora: mantenerte adelante con IA, analítica predictiva y arquitecturas de próxima generación.`;
+    ctaH   = lang==='en' ? 'Stay ahead. Lead the market.' : 'Mantente adelante. Lidera el mercado.';
+    ctaSub = lang==='en' ? "Your foundation is strong. Now it's about innovation: AI, data products, and technology leadership in your industry." : 'Tu base es sólida. Ahora se trata de innovación: IA, productos de datos y liderazgo tecnológico en tu industria.';
+    ctaPts = lang==='en'
+      ? ['AI implementation strategy for your industry', 'Data monetization — new revenue streams from your data', 'Innovation roadmap to maintain competitive edge']
+      : ['Estrategia de IA para tu industria', 'Monetización de datos — nuevas fuentes de ingresos', 'Hoja de ruta de innovación para mantener ventaja competitiva'];
+  }
+
+  // Populate result UI
+  document.getElementById('res-badge').textContent = badge;
+  document.getElementById('res-badge').className   = `badge ${bClass}`;
+  document.getElementById('res-name').textContent  = `${name} · ${company}`;
+  document.getElementById('res-cost').innerHTML    = `${cost}<span class="cost-per"> ${lang==='en'?'/ year':'/ año'}</span>`;
+  document.getElementById('res-cost-note').textContent = lang==='en'
+    ? 'Estimated from your responses. Includes lost productivity, manual labor costs, and missed revenue opportunities.'
+    : 'Estimado basado en tus respuestas. Incluye productividad perdida, costos de trabajo manual y oportunidades de ingresos desaprovechadas.';
+  document.getElementById('res-sum').textContent = summary;
+
+  // Animate score bar
+  setTimeout(() => {
+    const bar = document.getElementById('res-bar');
+    bar.className   = `sbar-fill ${fClass}`;
+    bar.style.width = total + '%';
+  }, 320);
+
+  // Area breakdown
+  const aMap = {};
+  Qs.forEach((q, i) => {
+    const a = q.area.en;
+    if (!aMap[a]) aMap[a] = [];
+    if (answers[i]) aMap[a].push(answers[i].score);
+  });
+
+  const bd = document.getElementById('area-bd');
+  bd.innerHTML = '';
+  Object.entries(aMap).forEach(([area, sc]) => {
+    const avg   = Math.round(sc.reduce((a,b) => a+b, 0) / sc.length);
+    const aName = lang === 'en' ? area : AREA_ES[area];
+    const note  = avg < 30
+      ? (lang==='en' ? 'High priority — immediate action needed'    : 'Alta prioridad — acción inmediata necesaria')
+      : avg < 60
+      ? (lang==='en' ? 'Room for significant improvement'           : 'Espacio para mejora significativa')
+      : avg < 80
+      ? (lang==='en' ? 'Good foundation — continue optimizing'      : 'Buena base — continuar optimizando')
+      : (lang==='en' ? 'Strong — focus on innovation'               : 'Sólido — enfocarse en innovación');
+    bd.innerHTML += `
+      <div class="area-row">
+        <div class="area-meta">
+          <span class="area-name">${aName}</span>
+          <span class="area-sc">${avg}/100</span>
+        </div>
+        <div class="area-track"><div class="area-fill" id="af${area}" style="background:${AREA_COLORS[area]}"></div></div>
+        <div class="area-note">${note}</div>
+      </div>`;
+  });
+  setTimeout(() => {
+    Object.entries(aMap).forEach(([area, sc]) => {
+      const avg = Math.round(sc.reduce((a,b) => a+b, 0) / sc.length);
+      const el  = document.getElementById(`af${area}`);
+      if (el) el.style.width = avg + '%';
+    });
+  }, 420);
+
+  document.getElementById('cta-h').textContent   = ctaH;
+  document.getElementById('cta-sub').textContent = ctaSub;
+  document.getElementById('cta-pts').innerHTML   = ctaPts.map(p => `<li>${p}</li>`).join('');
+
+  // Store for email
+  window._rd = { total, badge, cost, aMap };
+}
+
+// ── NOTIFY GOYE via EmailJS ─────────────────────────────────────
+const EMAILJS_SERVICE  = 'service_80e0x7a';
+const EMAILJS_TEMPLATE = 'template_ije0um8';
+const EMAILJS_KEY      = 'vURdcdYsUAFTUmSP3';
+
+function notifyGoye() {
+  const name     = document.getElementById('f-name').value.trim();
+  const last     = document.getElementById('f-last').value.trim();
+  const email    = document.getElementById('f-email').value.trim();
+  const company  = document.getElementById('f-company').value.trim();
+  const industry = document.getElementById('f-industry').value;
+  const size     = document.getElementById('f-size').value;
+
+  const sc    = Object.values(answers).map(a => a.score);
+  const total = sc.length ? Math.round(sc.reduce((a,b) => a+b, 0) / sc.length) : 0;
+  const tier  = total < 30 ? 'CRITICAL' : total < 55 ? 'DEVELOPING' : total < 78 ? 'PROGRESSING' : 'ADVANCED';
+
+  // Build area breakdown
+  const aMap = {};
+  Qs.forEach((q, i) => {
+    const a = q.area.en;
+    if (!aMap[a]) aMap[a] = [];
+    if (answers[i]) aMap[a].push(answers[i].score);
+  });
+  const breakdown = Object.entries(aMap)
+    .map(([a, s]) => `${a}: ${Math.round(s.reduce((x,y) => x+y, 0)/s.length)}/100`)
+    .join(' | ');
+
+  // Build detailed answers
+  const answersText = Qs.map((q, i) => {
+    if (!answers[i]) return `Q${i+1}: —`;
+    return `Q${i+1} [${q.area.en}]: ${q.opts[answers[i].idx].en} (${answers[i].score}pts)`;
+  }).join('\n');
+
+  // EmailJS template params
+  const params = {
+    prospect_name:  `${name} ${last}`,
+    prospect_email: email,
+    company:        company,
+    industry:       industry,
+    team_size:      size,
+    score:          total,
+    tier:           tier,
+    cost:           window._rd?.cost || '—',
+    breakdown:      breakdown,
+    answers:        answersText
+  };
+
+  // Initialize and send via EmailJS
+  emailjs.init(EMAILJS_KEY);
+  emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, params)
+    .then(() => {
+      console.log('Email sent to Goye successfully');
+    })
+    .catch((err) => {
+      console.warn('EmailJS error:', err);
+      // Fallback: open mailto if EmailJS fails
+      const subj = encodeURIComponent(`[Trinavia Assessment] ${name} ${last} — ${total}/100 — ${tier}`);
+      const body = encodeURIComponent(
+        `Name: ${name} ${last}\nEmail: ${email}\nCompany: ${company}\n` +
+        `Score: ${total}/100 (${tier})\nCost: ${window._rd?.cost || '—'}\n\n` +
+        `Breakdown: ${breakdown}\n\nAnswers:\n${answersText}`
+      );
+      window.open(`mailto:goye@trinaviaconsulting.com?subject=${subj}&body=${body}`);
+    });
+}
+
+// Init
+buildQs();
+</script>
+</body>
+</html>
